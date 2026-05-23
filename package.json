@@ -1,114 +1,80 @@
 {
   "name": "edex-ui",
-  "productName": "eDEX-UI",
   "version": "2.2.8",
-  "description": "A science fiction desktop running everywhere. Awesome.",
-  "keywords": [
-    "desktop",
-    "sci-fi",
-    "gui",
-    "portable",
-    "tty",
-    "terminal"
-  ],
-  "main": "src/_boot.js",
+  "description": "A cross-platform, customizable science fiction terminal emulator with advanced monitoring & touchscreen support.",
+  "main": "src/main.js",
   "scripts": {
-    "start": "electron src --nointro",
-    "install-linux": "npm install && cd src && npm install && ./../node_modules/.bin/electron-rebuild -f -w node-pty && cd ..",
-    "preinstall-windows": "npm install --global --production windows-build-tools && npm install --global node-gyp && setx PYTHON \"%USERPROFILE%\\.windows-build-tools\\python27\\python.exe\"",
-    "install-windows": "npm install && cd src && npm install && ..\\node_modules\\.bin\\electron-rebuild -f -w node-pty && cd ..",
-    "prebuild-linux": "rsync -a --info=progress2 src/ prebuild-src --exclude node_modules && node prebuild-minify.js && cd prebuild-src && npm install",
-    "prebuild-darwin": "rsync -a src/ prebuild-src --exclude node_modules && node prebuild-minify.js && cd prebuild-src && npm install",
-    "prebuild-windows": "mkdir prebuild-src && xcopy src\\* prebuild-src\\ /E /C /Q /Y && node prebuild-minify.js && cd prebuild-src && npm install",
-    "build-linux": "./node_modules/.bin/electron-builder build -l --x64 --ia32 --arm64 --armv7l",
-    "build-darwin": "./node_modules/.bin/electron-builder build -m",
-    "build-windows": "node_modules\\.bin\\electron-builder build -w",
-    "postbuild-linux": "rm -R prebuild-src",
-    "postbuild-darwin": "rm -R prebuild-src",
-    "postbuild-windows": "rmdir /S /Q prebuild-src",
-    "test": "rsync -a --info=progress2 src/ prebuild-src --exclude node_modules && node prebuild-minify.js && cd prebuild-src && npm install && snyk test && cd .. && rm -R prebuild-src",
-    "init-file-icons": "git submodule update --init",
-    "update-file-icons": "git submodule foreach git pull origin master && node file-icons-generator.js"
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder build",
+    "build:linux": "electron-builder build --linux",
+    "build:mac": "electron-builder build --mac",
+    "build:win": "electron-builder build --win",
+    "lint": "eslint src/",
+    "test": "echo \"No tests configured\" && exit 0"
   },
+  "author": "GitSquared <gabriel@saillard.dev>",
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/GitSquared/edex-ui",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GitSquared/edex-ui.git"
+    "url": "https://github.com/GitSquared/edex-ui.git"
   },
-  "author": "Gabriel 'Squared' SAILLARD <gabriel@saillard.dev> (https://gaby.dev)",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/GitSquared/edex-ui/issues"
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "node-pty": "^0.10.1",
+    "systeminformation": "^5.17.12",
+    "xterm": "^4.19.0"
   },
-  "homepage": "https://github.com/GitSquared/edex-ui#readme",
+  "devDependencies": {
+    "electron": "^22.0.0",
+    "electron-builder": "^23.6.0",
+    "eslint": "^8.30.0"
+  },
   "build": {
-    "appId": "com.edex.ui",
+    "appId": "com.gitSquared.edex-ui",
     "productName": "eDEX-UI",
-    "publish": "github",
+    "copyright": "Copyright © 2018-2023 GitSquared",
     "asar": true,
-    "compression": "normal",
-    "copyright": "Copyright © 2017-2021 Gabriel 'Squared' SAILLARD <gabriel@saillard.dev> (https://gaby.dev)",
-    "directories": {
-      "output": "dist",
-      "app": "prebuild-src"
-    },
-    "forceCodeSigning": false,
-    "npmRebuild": true,
-    "artifactName": "eDEX-UI-${os}-${arch}.${ext}",
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "assets/",
+        "to": "assets/"
+      }
+    ],
     "linux": {
       "target": [
-        "AppImage"
+        "AppImage",
+        "deb",
+        "rpm"
       ],
-      "category": "System",
-      "icon": "media/linuxIcons"
-    },
-    "appImage": {
-      "artifactName": "eDEX-UI-Linux-${arch}.AppImage"
+      "category": "Utility",
+      "icon": "assets/icon.png"
     },
     "mac": {
       "target": [
-        {
-          "target": "dmg",
-          "arch": [
-            "x64"
-          ]
-        }
+        "dmg",
+        "zip"
       ],
-      "category": "public.app-category.utilities",
-      "icon": "media/icon.icns"
-    },
-    "dmg": {
-      "artifactName": "eDEX-UI-macOS-${arch}.dmg"
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.utilities"
     },
     "win": {
       "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
-        }
+        "nsis",
+        "portable"
       ],
-      "icon": "media/icon.ico"
+      "icon": "assets/icon.ico"
     },
     "nsis": {
-      "artifactName": "eDEX-UI-Windows-${arch}.exe",
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "deleteAppDataOnUninstall": true
+      "allowToChangeInstallationDirectory": true
     }
-  },
-  "dependencies": {
-    "clean-css": "5.2.1",
-    "electron": "^12.1.0",
-    "electron-builder": "^22.14.5",
-    "electron-rebuild": "^2.3.5",
-    "mime-types": "^2.1.33",
-    "node-abi": "2.30.1",
-    "node-json-minify": "1.0.0",
-    "terser": "^5.9.0"
-  },
-  "optionalDependencies": {
-    "cson-parser": "4.0.9"
   }
 }
