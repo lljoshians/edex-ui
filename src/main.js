@@ -20,7 +20,7 @@ const defaultConfig = {
     shellArgs: [],
     TTYRows: 30,
     TTYCols: 100,
-    fontSize: 17,
+    fontSize: 18, // bumped up from 17, easier on the eyes
     fontFamily: 'Fira Code',
     opacity: 1.0,
     allowTransparency: false,
@@ -107,13 +107,4 @@ app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
     // On macOS apps stay active until explicitly quit
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
-
-app.on('activate', () => {
-    if (mainWindow === null) {
-        createWindow();
-    }
-});
+    if (process.platform 
